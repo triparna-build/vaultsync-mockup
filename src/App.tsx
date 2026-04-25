@@ -80,7 +80,57 @@ function IconUsers({ active }: { active: boolean }) {
   )
 }
 
-function AppHeader() {
+function HomeScreen({ onEnter }: { onEnter: () => void }) {
+  return (
+    <div className="flex min-h-[100svh] flex-col items-center justify-between bg-gradient-to-br from-slate-950 via-slate-900 to-sky-900 px-8 pb-[max(28px,env(safe-area-inset-bottom))] pt-16 text-slate-50">
+      <div className="flex w-full items-center justify-between text-xs text-slate-300">
+        <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1">
+          Local‑first
+        </span>
+        <span className="font-medium tracking-wide text-emerald-300/90">
+          Private • Encrypted
+        </span>
+      </div>
+
+      <div className="mt-16 flex flex-col items-center gap-6">
+        <div className="relative">
+          <div className="grid h-24 w-24 place-items-center rounded-3xl border border-white/12 bg-gradient-to-br from-sky-500/80 via-indigo-500/80 to-slate-900 shadow-[0_40px_80px_-40px_rgba(15,23,42,1)]">
+            <div className="relative -skew-x-[10deg] text-3xl font-black tracking-[0.08em]">
+              <span className="text-sky-100">V</span>
+            </div>
+          </div>
+          <div className="pointer-events-none absolute inset-0 -z-10 scale-125 rounded-3xl bg-[radial-gradient(circle_at_50%_0,rgba(56,189,248,0.45),transparent_60%)] opacity-60" />
+        </div>
+
+        <div className="text-center">
+          <div className="text-[28px] font-semibold tracking-[0.22em] text-sky-50">
+            VAULTSYNC
+          </div>
+          <div className="mt-3 text-sm text-slate-300">
+            Local‑first vault for UHNW families syncing sensitive asset data across
+            trusted devices.
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-20 flex w-full flex-col gap-4">
+        <button
+          type="button"
+          onClick={onEnter}
+          className="w-full rounded-3xl border border-sky-300/40 bg-gradient-to-r from-sky-400/80 via-cyan-300/90 to-emerald-300/80 px-6 py-3 text-sm font-semibold tracking-wide text-slate-950 shadow-[0_28px_70px_-42px_rgba(56,189,248,1)] hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-300/80"
+        >
+          Unlock vault
+        </button>
+        <div className="flex items-center justify-between text-[11px] text-slate-400">
+          <span>Built for private, offline‑first workflows.</span>
+          <span className="text-slate-300">v0.1</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function AppHeader({ onLock }: { onLock: () => void }) {
   return (
     <header className="px-4 pt-5 pb-3">
       <div className="flex items-center justify-between">
@@ -92,8 +142,18 @@ function AppHeader() {
             Local-first asset vault
           </h1>
         </div>
-        <div className="rounded-2xl border border-amber-300/15 bg-gradient-to-b from-amber-300/10 to-white/5 px-3 py-2 text-xs text-slate-200 shadow-[0_20px_40px_-25px_rgba(0,0,0,0.9)] backdrop-blur">
-          Private • Decentralized
+        <div className="flex items-center gap-2">
+          <div className="rounded-2xl border border-amber-300/15 bg-gradient-to-b from-amber-300/10 to-white/5 px-3 py-2 text-xs text-slate-200 shadow-[0_20px_40px_-25px_rgba(0,0,0,0.9)] backdrop-blur">
+            Private • Decentralized
+          </div>
+          <button
+            type="button"
+            onClick={onLock}
+            className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-slate-100 shadow-[0_20px_40px_-25px_rgba(0,0,0,0.9)] backdrop-blur hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/40"
+            aria-label="Return to home screen"
+          >
+            Lock
+          </button>
         </div>
       </div>
     </header>
@@ -1425,6 +1485,7 @@ function BottomNav({
 }
 
 export default function App() {
+  const [showHome, setShowHome] = useState(true)
   const [tab, setTab] = useState<TabKey>('dashboard')
 
   const tabs = useMemo<Tab[]>(
@@ -1437,11 +1498,15 @@ export default function App() {
     [],
   )
 
+  if (showHome) {
+    return <HomeScreen onEnter={() => setShowHome(false)} />
+  }
+
   return (
     <div className="mx-auto min-h-[100svh] max-w-md">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-amber-300/10 via-indigo-500/10 to-transparent" />
 
-      <AppHeader />
+      <AppHeader onLock={() => setShowHome(true)} />
 
       <main className="relative">
         {tab === 'dashboard' && <DashboardScreen />}
